@@ -74,3 +74,23 @@ Explanation: Only the customer_id with id 3 bought the product A and B but not t
 select customer_id, customer_name from Customers c 
 where (select count(product_name) from Orders where customer_id = c.customer_id and product_name in('A', 'B')) = 2
 and (select count(product_name) from Orders where customer_id = c.customer_id and product_name = 'C') = 0;
+
+
+# Write your MySQL query statement below
+    
+with cte as (
+select customer_id,
+sum(case when product_name='A' then 1 else 0 end) as cnt_A,
+sum(case when product_name='B' then 1 else 0 end) as cnt_B,
+sum(case when product_name='C' then 1 else 0 end) as cnt_C
+from orders    -- get cnt per product per customer
+group by customer_id
+)
+
+select cte.customer_id,
+    c.customer_name
+from cte
+join customers c
+    on cte.customer_id=c.customer_id
+where cte.cnt_A>0 and cte.cnt_B>0 and cte.cnt_C=0   -- A,B>0 and C=0
+order by cte.customer_id
