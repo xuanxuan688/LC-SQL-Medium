@@ -84,3 +84,27 @@ join Logins l2
 group by l1.id, l1.login_date
 having count(distinct l2.login_date)>=4
 order by l1.id
+
+
+
+This is a classic problem of find consecutive data.
+
+select distinct a.id, a.name
+from Logins l1 join Logins l2
+on l1.id = l2.id and datediff(l2.login_date, l1.login_date) between 0 and 4
+join Accounts a
+on l1.id = a.id
+group by l1.id, l1.login_date
+having count(distinct l2.login_date) = 5
+Approach Breakdown:
+
+Start with Join
+Whenever, we are faced with "finding some consecutives":, the first approach that could fit in is using Joins.
+For this problem, take a Logins row l1,
+Since, we are tasked to find consecutive days (Logins row l2) after l1.login_date
+To achieve so, we should do join between Logins l1 and Logins l2
+
+Filtering out 5 consecutives
+Focus on finding only 5 consecutives days.
+Starting from l1.login_date, we should look for dates in ranges (l1.login_date + 0, l2.login_date + 4)
+To determine if the above l2.login_date are consecutive, filter with count(distinct l2.login_date) which should be 5 (since we need all the 5 days)
