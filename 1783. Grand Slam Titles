@@ -1,0 +1,106 @@
+Table: Players
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| player_id      | int     |
+| player_name    | varchar |
++----------------+---------+
+player_id is the primary key for this table.
+Each row in this table contains the name and the ID of a tennis player.
+ 
+
+Table: Championships
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| year          | int     |
+| Wimbledon     | int     |
+| Fr_open       | int     |
+| US_open       | int     |
+| Au_open       | int     |
++---------------+---------+
+year is the primary key for this table.
+Each row of this table contains the IDs of the players who won one each tennis tournament of the grand slam.
+ 
+
+Write an SQL query to report the number of grand slam tournaments won by each player. Do not include the players who did not win any tournament.
+
+Return the result table in any order.
+
+The query result format is in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+Players table:
++-----------+-------------+
+| player_id | player_name |
++-----------+-------------+
+| 1         | Nadal       |
+| 2         | Federer     |
+| 3         | Novak       |
++-----------+-------------+
+Championships table:
++------+-----------+---------+---------+---------+
+| year | Wimbledon | Fr_open | US_open | Au_open |
++------+-----------+---------+---------+---------+
+| 2018 | 1         | 1       | 1       | 1       |
+| 2019 | 1         | 1       | 2       | 2       |
+| 2020 | 2         | 1       | 2       | 2       |
++------+-----------+---------+---------+---------+
+Output: 
++-----------+-------------+-------------------+
+| player_id | player_name | grand_slams_count |
++-----------+-------------+-------------------+
+| 2         | Federer     | 5                 |
+| 1         | Nadal       | 7                 |
++-----------+-------------+-------------------+
+Explanation: 
+Player 1 (Nadal) won 7 titles: Wimbledon (2018, 2019), Fr_open (2018, 2019, 2020), US_open (2018), and Au_open (2018).
+Player 2 (Federer) won 5 titles: Wimbledon (2020), US_open (2019, 2020), and Au_open (2019, 2020).
+Player 3 (Novak) did not win anything, we did not include them in the result table.
+
+
+
+
+# Write your MySQL query statement below
+
+with cte as (select 
+    p.player_id, p.player_name,
+    (case when p.player_id=c.Wimbledon then 1 else 0 end
+     + case when p.player_id=c.Fr_open then 1 else 0 end
+     + case when p.player_id=c.US_open then 1 else 0 end
+     + case when p.player_id=c.Au_open then 1 else 0 end) wins
+from players p cross join championships c)
+
+select player_id, player_name, 
+    sum(wins) grand_slams_count
+from cte
+group by player_id
+having sum(wins)>0
+
+
+
+Method 2:
+
+select p.player_id,p.player_name, 
+sum(p.player_id=c.wimbledon)+sum(p.player_id=c.fr_open)+sum(p.player_id=c.us_open)+sum(p.player_id=c.au_open) as grand_slams_count
+from Players p
+inner join Championships c
+on p.player_id=c.wimbledon  or p.player_id=c.fr_open or p.player_id=c.us_open or p.player_id=c.au_open
+group by player_id; 
+
+Method 3:
+
+select p.player_id,p.player_name,
+sum(case when p.player_id=c.wimbledon then 1 else 0 end
++ case when p.player_id=c.fr_open then 1 else 0 end
++ case when p.player_id=c.us_open then 1 else 0 end
++ case when p.player_id=c.au_open then 1 else 0 end) as grand_slams_count
+from players p cross join championships c
+group by player_id
+having grand_slams_count>0; 
