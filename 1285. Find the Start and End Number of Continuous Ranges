@@ -57,6 +57,14 @@ select min(log_id) as start_id,
 from (select log_id, rank() over (order by log_id)  rnk from Logs) t
 group by log_id-rnk
 
+log_id   rnk	log_id-rnk
+1  	 1  	 0
+2  	 2 	 0
+3  	 3  	 0
+7  	 4  	 3
+8  	 5  	 3
+10 	 6  	 4
+
 
 
 select L1.log_id as START_ID, min(L2.log_id) as END_ID
