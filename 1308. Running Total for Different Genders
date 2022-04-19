@@ -85,3 +85,7 @@ WHERE s1.gender = s2.gender AND s2.day <= s1.day
 GROUP BY s1.gender, s1.day
 ORDER BY s1.gender, s1.day
 -- with self join
+
+-- we associate each of gender and day in first scores table with same gender of second table and all days that are less than days of first table. 
+This is implemented using JOIN.
+-- This sum is running total because we have associated two tables such that days in second table are previous days associated with days of first table.
