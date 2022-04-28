@@ -74,7 +74,22 @@ Follow up: Could you write a general solution if the active users are those who 
 
 
 # Write your MySQL query statement below
+S1
+-- find user login date and the 4 days after the date (using window function) as lag4
+-- datediff(day, lag4, login_date)=4
+select t.id, a.name
+from (
+ select id, login_date,
+        lag(login_date, 4) over(partition by id order by login_date) as lag4
+ from Logins) as t
+join Accounts a
+ on t.id=a.id
+where datediff(day, lag4, login_date)=4
 
+
+
+
+S2:
 select distinct l1.id,
 (select name from Accounts where id=l1.id) name
 from Logins l1
