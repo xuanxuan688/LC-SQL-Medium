@@ -60,7 +60,7 @@ SELECT id,
     rank() over (order by salary desc) rnk
 FROM employee)
 
-SELECT max(salary) as SecondHighestSalary         -- remember to use MAX(). why?
+SELECT max(salary) as SecondHighestSalary         -- remember to use MAX(). It will automatically return null.
 FROM cte
 WHERE rnk=2;
 
