@@ -70,6 +70,20 @@ Output:
 
 # Write your MySQL query statement below
 
+-- find book available for more than one month, then filter out quantity<10
+
+select a.book_id, a.name
+from Books a
+left join Orders b
+    on a.book_id=b.book_id
+where a.available_from<='2019-05-23'
+group by a.book_id
+having sum(case when b.dispatch_date>=DATE_SUB('2019-06-23', interval 1 year) then quantity else 0 end)<10
+
+
+
+# Write your MySQL query statement below
+
 select b.book_id, b.name
 from books b
 left join orders o
@@ -78,3 +92,18 @@ left join orders o
 where datediff('2019-06-23', b.available_from)>30 
 group by b.book_id, b.name
 having ifnull(sum(o.quantity),0)<10  -- ifnull so that will return books with no sales
+
+
+
+
+
+SELECT book_id, 
+       name
+FROM Books
+WHERE available_from < '2019-05-23'
+AND book_id NOT IN
+            (SELECT book_id
+             FROM Orders
+             WHERE dispatch_date BETWEEN '2018-06-23' AND '2019-06-23'
+             GROUP BY book_id
+             Having sum(quantity) >= 10) 
