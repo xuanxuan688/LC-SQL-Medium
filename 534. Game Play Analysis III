@@ -57,11 +57,16 @@ Note that for each player we only care about the days when the player logged in.
 
 -- by player_id, event_date
 -- sum(games_played) as games_played_so_far
--- lead()
 
-select player_id, event_date, 
-    sum(games_played) over(partition by player_id order by event_date asc) as games_played_so_far
-from Activity
+
+with cte as (select player_id, 
+    event_date,
+    sum(games_played) over (partition by player_id order by event_date) as games_played_so_far  -- sum of each playerid in each eventdate
+from Activity)
+select player_id, event_date, games_played_so_far
+from cte
+group by 1,2
+order by player_id, event_date
 
 
 
